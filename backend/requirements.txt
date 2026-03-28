@@ -1,15 +1,7 @@
 fastapi
-uvicorn[standard]
+uvicorn
 python-dotenv
 sqlalchemy
 pymysql
-cryptography
-google-auth
-google-auth-oauthlib
-google-api-python-client
 openai
-python-jose[cryptography]
-passlib[bcrypt]
-apscheduler
 httpx
-pydantic-settings
