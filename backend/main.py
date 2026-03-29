@@ -393,17 +393,19 @@ async def create_order(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """Create a PayPal one-time order and return the approval URL."""
     if not settings.paypal_configured:
         raise HTTPException(503, "PayPal is not configured on this server")
 
-    from paypal_service import create_order as pp_create_order
+    try:
+        from paypal_service import create_order as pp_create_order
+    except Exception:
+        raise HTTPException(503, "PayPal service unavailable")
 
     result = await pp_create_order(data.plan, data.return_url, data.cancel_url)
+
     if not result:
         raise HTTPException(502, "Failed to create PayPal order")
 
-    # Record the pending payment
     payment = Payment(
         user_id=current_user.id,
         paypal_order_id=result["order_id"],
@@ -414,8 +416,10 @@ async def create_order(
     db.add(payment)
     db.commit()
 
-    return {"order_id": result["order_id"], "approval_url": result["approval_url"]}
-
+    return {
+        "order_id": result["order_id"],
+        "approval_url": result["approval_url"],
+    }
 
 @app.post("/api/billing/capture-order")
 async def capture_order(
@@ -430,7 +434,10 @@ async def capture_order(
     if not settings.paypal_configured:
         raise HTTPException(503, "PayPal is not configured on this server")
 
+    try:
     from paypal_service import capture_order as pp_capture
+except Exception:
+    raise HTTPException(503, "PayPal service unavailable")
 
     result = await pp_capture(data.order_id)
     if not result or result.get("status") != "COMPLETED":
