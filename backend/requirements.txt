@@ -1,15 +1,35 @@
+# FollowFlow — Python dependencies
+# Minimal but complete. All versions pinned for reproducible deploys.
+# Install: pip install -r requirements.txt
+
+# ── Web framework ──────────────────────────────────────────────
 fastapi==0.111.0
 uvicorn[standard]==0.29.0
+
+# ── Settings (.env support) ───────────────────────────────────
 python-dotenv==1.0.1
+pydantic-settings==2.2.1
+
+# ── Database (SQLAlchemy — works with SQLite out of the box) ──
 sqlalchemy==2.0.30
-pymysql==1.1.0
-cryptography==42.0.7
+# MySQL driver (only needed if switching from SQLite):
+# pymysql==1.1.0
+# cryptography==42.0.7
+
+# ── Auth ──────────────────────────────────────────────────────
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+
+# ── HTTP client (PayPal API calls) ────────────────────────────
+httpx==0.27.0
+
+# ── Background scheduler ──────────────────────────────────────
+apscheduler==3.10.4
+
+# ── OpenAI (optional — gracefully skipped if key not set) ─────
+openai==1.30.1
+
+# ── Gmail API (optional — gracefully skipped if not configured)
 google-auth==2.29.0
 google-auth-oauthlib==1.2.0
 google-api-python-client==2.129.0
-openai==1.30.1
-python-jose[cryptography]==3.3.0
-passlib[bcrypt]==1.7.4
-apscheduler==3.10.4
-httpx==0.27.0
-pydantic-settings==2.2.1
