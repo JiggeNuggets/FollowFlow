@@ -434,12 +434,14 @@ async def capture_order(
     if not settings.paypal_configured:
         raise HTTPException(503, "PayPal is not configured on this server")
 
-   try:
-    from paypal_service import capture_order as pp_capture
-except Exception:
-    raise HTTPException(503, "PayPal service not available")
+    # ✅ FIXED INDENTATION
+    try:
+        from paypal_service import capture_order as pp_capture
+    except Exception:
+        raise HTTPException(503, "PayPal service not available")
 
-result = await pp_capture(data.order_id)
+    result = await pp_capture(data.order_id)
+
     if not result or result.get("status") != "COMPLETED":
         raise HTTPException(402, "Payment was not completed")
 
@@ -448,13 +450,15 @@ result = await pp_capture(data.order_id)
         Payment.paypal_order_id == data.order_id,
         Payment.user_id == current_user.id,
     ).first()
+
     if payment:
         payment.paypal_capture_id = result.get("capture_id")
         payment.status = "completed"
 
     # Upgrade user's plan
-    current_user.plan       = data.plan
+    current_user.plan = data.plan
     current_user.sub_status = "active"
+
     db.commit()
 
     return {
@@ -462,8 +466,7 @@ result = await pp_capture(data.order_id)
         "capture_id": result.get("capture_id"),
         "amount": result.get("amount"),
     }
-
-
+    
 # ─────────────────────────────────────────────────────────────
 # PAYPAL — SUBSCRIPTIONS (recurring billing)
 # ─────────────────────────────────────────────────────────────
