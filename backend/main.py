@@ -434,12 +434,12 @@ async def capture_order(
     if not settings.paypal_configured:
         raise HTTPException(503, "PayPal is not configured on this server")
 
-    try:
+   try:
     from paypal_service import capture_order as pp_capture
 except Exception:
-    raise HTTPException(503, "PayPal service unavailable")
+    raise HTTPException(503, "PayPal service not available")
 
-    result = await pp_capture(data.order_id)
+result = await pp_capture(data.order_id)
     if not result or result.get("status") != "COMPLETED":
         raise HTTPException(402, "Payment was not completed")
 
